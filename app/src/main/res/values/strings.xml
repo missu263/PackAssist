@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">PackAssist</string>
+    <string name="description">自动打包上传蒲公英，发送消息到飞书</string>
+</resources>
