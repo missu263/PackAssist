@@ -1,5 +1,10 @@
 apply plugin: 'groovy'
 apply plugin: 'maven'
+apply from: '../publish-mavencentral.gradle'
+
+//ext {
+//    PUBLISH_ARTIFACT_ID = 'packetassit'
+//}
 
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
@@ -13,13 +18,13 @@ repositories {
     jcenter()
 }
 
-//发布代码到本地
-uploadArchives {
-    //classpath : groupId：artifactId:version
-    repositories.mavenDeployer {
-        repository(url: uri('../repo'))//仓库路径，此处是项目目录下的repo文件夹
-        pom.groupId = 'com.javassist.plugin'//groupid自行定义，一般是包名
-        pom.artifactId = 'javassistplugin'//自行定义
-        pom.version = '1.0.0'//版本名称
-    }
-}
+////发布代码到本地
+//uploadArchives {
+//    //classpath : groupId：artifactId:version
+//    repositories.mavenDeployer {
+//        repository(url: uri('../repo'))//仓库路径，此处是项目目录下的repo文件夹
+//        pom.groupId = 'io.github.missu263'//groupid自行定义，一般是包名
+//        pom.artifactId = 'javassistplugin'//自行定义
+//        pom.version = '1.0.0'//版本名称
+//    }
+//}

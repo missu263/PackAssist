@@ -120,14 +120,6 @@ public class ApkUploader {
 
     }
 
-    public static void main(String[] args) throws Exception {
-        PgyUploadResult uploadResult = startUpload2Pgy("/Users/nieqi/AndroidStudioProjects/PackAssist/app/build/outputs/apk/debug/app-debug.apk",
-                "b58cfb43d6a75736ba30f4194622baf6");
-
-        startSendFeishuMessage(uploadResult, "FeiShuBotTest",
-                "cli_9e5586ce9334d00e", "x6ZsXRUqo5zc8QQT40tWtdjp165r8NhD", "");
-    }
-
     private static String uploadDownloadQRCode2Feishu(String token, String qrImageUrl) throws Exception {
         OkHttpClient imageOkHttpClient = new OkHttpClient();
         Request imageResourceRequest = new Request.Builder()

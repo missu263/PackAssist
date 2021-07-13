@@ -1,22 +1,27 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
     ext.kotlin_version = "1.4.21"
+    ext.dokka_version = '1.4.10.2'
+
     repositories {
         google()
         jcenter()
         mavenCentral()
-        maven { url uri("./repo") }
+//        maven { url uri("./repo") }
     }
     dependencies {
         classpath "com.android.tools.build:gradle:4.0.0"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath 'com.javassist.plugin:javassistplugin:1.0.0'
+//        classpath 'com.javassist.plugin:javassistplugin:1.0.0'
+        classpath "io.github.missu263:packassist:1.0.0"
         classpath 'com.github.dcendents:android-maven-gradle-plugin:1.4.1'
+        classpath "org.jetbrains.dokka:dokka-gradle-plugin:$dokka_version"
     }
 }
 
 allprojects {
     repositories {
+//        maven{ url 'http://maven.aliyun.com/nexus/content/groups/public/'}
         google()
         jcenter()
     }

@@ -3,6 +3,14 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'pack.assist.plugin'
 
+def localPropertiesFile = rootProject.file("./local.properties")
+def localProperties = new Properties()
+if (localPropertiesFile.exists()) {
+    localProperties.load(new FileInputStream(localPropertiesFile))
+} else {
+    println "No properties file"
+}
+
 android {
     compileSdkVersion 30
     buildToolsVersion "30.0.3"
@@ -25,10 +33,10 @@ android {
     }
 
     packAssist {
-        chatName "FeiShuBotTest"
-        feishuBotAppId "cli_9e5586ce9334d00e"
-        feishuBotAppSecret "x6ZsXRUqo5zc8QQT40tWtdjp165r8NhD"
-        pgyApiKey "b58cfb43d6a75736ba30f4194622baf6"
+        chatName localProperties['chatName']
+        feishuBotAppId localProperties['feishuBotAppId']
+        feishuBotAppSecret localProperties['feishuBotAppSecret']
+        pgyApiKey localProperties['pgyApiKey']
     }
 }
 
