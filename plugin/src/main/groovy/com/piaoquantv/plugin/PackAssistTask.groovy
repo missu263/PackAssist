@@ -38,7 +38,8 @@ public class PackAssistTask extends DefaultTask {
                     description = targetProject.getProperties().get(DESCRIPTION)
                 }
 
-                println(description)
+                println("description = " + description)
+                println("apkFile =  " + apkFile.path)
 
                 ApkUploader.start(apkFile.path, extension.pgyApiKey, extension.chatName,
                         extension.feishuBotAppId, extension.feishuBotAppSecret, description)

@@ -14,3 +14,5 @@
 .cxx
 .idea
 /repo/
+/maveCentralInfo.txt
+/plugin/build/

@@ -32,7 +32,10 @@ public class MessageHelper {
         elements.add(imageElement);
 
         DivElement textElement = new DivElement();
-        textElement.fields.add(new Filed(new MarkDownText(String.format("**备注**：%s", description))));
+        if (description != null && !description.isEmpty()) {
+            textElement.fields.add(new Filed(new MarkDownText(String.format("**备注**：%s", description))));
+        }
+        textElement.fields.add(new Filed(new MarkDownText(String.format("**打包人**：%s", System.getProperty("user.name")))));
         textElement.fields.add(new Filed(new MarkDownText("**安装密码：**123456")));
         textElement.fields.add(new Filed(new MarkDownText(String.format("**版本号：**%s", pgyUploadResult.getBuildVersion()))));
         textElement.fields.add(new Filed(new MarkDownText(String.format("**蒲公英构建版本号：**%s", pgyUploadResult.getBuildBuildVersion()))));

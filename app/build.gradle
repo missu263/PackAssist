@@ -30,6 +30,11 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+
+        snapshot {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
     }
 
     packAssist {
@@ -37,6 +42,33 @@ android {
         feishuBotAppId localProperties['feishuBotAppId']
         feishuBotAppSecret localProperties['feishuBotAppSecret']
         pgyApiKey localProperties['pgyApiKey']
+    }
+
+    task releasePackAssist {
+        afterEvaluate {
+            tasks.findByName('assembleReleaseAssist').doFirst {
+                project.setProperty("description", "release")
+            }
+            dependsOn 'assembleReleaseAssist'
+        }
+    }
+
+    task testPackAssist {
+        afterEvaluate {
+            tasks.findByName('assembleSnapshotAssist').doFirst {
+                project.setProperty("description", "snapshot")
+            }
+            dependsOn 'assembleSnapshotAssist'
+        }
+    }
+
+    task debugPackAssist {
+        afterEvaluate {
+            tasks.findByName('assembleDebugAssist').doFirst {
+                project.setProperty("description", "debug")
+            }
+            dependsOn 'assembleDebugAssist'
+        }
     }
 }
 

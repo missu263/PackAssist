@@ -3,6 +3,7 @@ package com.piaoquantv.plugin
 import com.android.build.gradle.api.BaseVariant
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.ProjectConfigurationException
 
 /**
  * Create by nieqi on 2021/7/7
@@ -13,23 +14,26 @@ class PackAssistPlugin implements Plugin<Project> {
 
     @Override
     void apply(Project target) {
-        def extension = target.extensions.create(PACK_ASSIST_EXTENSION, Extension)
 
+        if (!target.plugins.hasPlugin("com.android.application")) {
+            throw new ProjectConfigurationException("Plugin requires the 'com.android.application' plugin to be configured.", null);
+        }
+
+        def extension = target.extensions.create(PACK_ASSIST_EXTENSION, Extension)
         target.afterEvaluate {
-            println("===========PackAssistPlugin working=============")
             try {
                 target.android.applicationVariants.all { BaseVariant variant ->
                     def variantName = variant.name.capitalize()
 
-                    PackAssistTask testAssistTask = target.tasks.create("assemble${variantName}Assist", PackAssistTask);
-                    testAssistTask.targetProject = target
-                    testAssistTask.variant = variant
-                    testAssistTask.setup()
+                    PackAssistTask packAssistTask = target.tasks.create("assemble${variantName}Assist", PackAssistTask);
+                    packAssistTask.targetProject = target
+                    packAssistTask.variant = variant
+                    packAssistTask.setup()
 
                     if (variant.hasProperty('assembleProvider')) {
-                        testAssistTask.dependsOn variant.assembleProvider.get()
+                        packAssistTask.dependsOn variant.assembleProvider.get()
                     } else {
-                        testAssistTask.dependsOn variant.assemble
+                        packAssistTask.dependsOn variant.assemble
                     }
                 }
             } catch (Exception e) {

@@ -40,7 +40,15 @@ public class ApkUploader {
 
     public static void start(String apkPath, String pgyApiKey, String chatName,
                              String feishuBotAppId, String feishuBotAppSecret, String description) throws Exception {
+        if (isEmpty(pgyApiKey)) {
+            throw new IllegalArgumentException("please config vars");
+        }
+
         PgyUploadResult pgyUploadResult = startUpload2Pgy(apkPath, pgyApiKey);
+
+        if (isEmpty(feishuBotAppId) || isEmpty(feishuBotAppSecret) || isEmpty(chatName) || pgyUploadResult == null)
+            return;
+
         startSendFeishuMessage(pgyUploadResult, chatName, feishuBotAppId, feishuBotAppSecret, description);
     }
 
@@ -148,4 +156,7 @@ public class ApkUploader {
         return feishuImageResult.getImage_key();
     }
 
+    public static boolean isEmpty(String s) {
+        return s == null || s.isEmpty();
+    }
 }
