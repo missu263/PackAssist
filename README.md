@@ -16,7 +16,7 @@
 ```groovy
 buildscript {
     dependencies {
-        classpath 'io.github.missu263:packassist:1.1.0'
+        classpath 'io.github.missu263:packassist:1.2.0'
     }
 }
 ```

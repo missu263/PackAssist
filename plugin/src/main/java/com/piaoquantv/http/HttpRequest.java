@@ -2,11 +2,13 @@ package com.piaoquantv.http;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.piaoquantv.http.listener.UploadProgressListener;
 
 import java.io.File;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.FormBody;
 import okhttp3.Headers;
@@ -22,7 +24,12 @@ import okhttp3.Response;
  */
 public class HttpRequest<T> {
 
-    OkHttpClient client = new OkHttpClient();
+    OkHttpClient client = new OkHttpClient().newBuilder()
+            .readTimeout(300, TimeUnit.SECONDS)
+            .callTimeout(300, TimeUnit.SECONDS)
+            .writeTimeout(300, TimeUnit.SECONDS)
+            .connectTimeout(300, TimeUnit.SECONDS)
+            .build();
 
     private String url;
     private Type type;
@@ -82,7 +89,21 @@ public class HttpRequest<T> {
             multipartBodyBuilder.addFormDataPart("file", file.getName(), RequestBody.create(MediaType.parse("application/*"), file));
         }
 
-        return doRequest(multipartBodyBuilder.build(), headers);
+        final int[] progress = {0};
+
+        ProgressMultipartBody progressMultipartBody = new ProgressMultipartBody(multipartBodyBuilder.build(), new UploadProgressListener() {
+            @Override
+            public void onProgress(long total, long current) {
+                int currentProgress = (int) (current * 100 / total);
+                if (currentProgress > progress[0]) {
+                    progress[0] = currentProgress;
+                    System.out.println("apk uploading progress = " + progress[0] + "% ");
+                }
+
+            }
+        });
+
+        return doRequest(progressMultipartBody, headers);
     }
 
 }

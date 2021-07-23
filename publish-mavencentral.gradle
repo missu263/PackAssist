@@ -12,12 +12,12 @@ task javadocJar(type: Jar) {
 }
 
 artifacts {
-    archives javadocJar,sourcesJar
+    archives javadocJar, sourcesJar
 }
 
 ext {
     PUBLISH_GROUP_ID = 'io.github.missu263'
-    PUBLISH_VERSION = '1.0.0'
+    PUBLISH_VERSION = '1.2.0'
     PUBLISH_ARTIFACT_ID = "packassist"
 }
 
@@ -45,7 +45,7 @@ signing {
 
 group = PUBLISH_GROUP_ID
 archivesBaseName = PUBLISH_ARTIFACT_ID
-version = "1.1.0"
+version = PUBLISH_VERSION
 
 uploadArchives {
     repositories {
