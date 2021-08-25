@@ -64,17 +64,33 @@ public class HttpRequest<T> {
 
         Response response = client.newCall(request).execute();
 
+        return checkResponse(response);
+    }
+
+    private T checkResponse(Response response) throws Exception {
         if (response.isSuccessful()) {
             if (isHttpResponse) {
                 HttpResponse<T> result = new Gson().fromJson(response.body().string(), type);
-                System.out.println("request message = " + result.getRealMessage());
+                System.out.println(url + " request message = " + result.getRealMessage());
                 return result.getData();
             } else {
+                System.out.println(url + " success");
                 return new Gson().fromJson(response.body().string(), type);
             }
         } else {
             throw new IllegalStateException(url + " , http response code = " + response.code());
         }
+    }
+
+    public T doGetRequest(Headers headers) throws Exception {
+        Request request = new Request.Builder()
+                .url(url)
+                .get()
+                .headers(headers)
+                .build();
+
+        Response response = client.newCall(request).execute();
+        return checkResponse(response);
     }
 
     public T doRequest(HashMap<String, String> params, File file, Headers headers) throws Exception {

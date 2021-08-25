@@ -44,7 +44,7 @@ public class ApkUploader {
             throw new IllegalArgumentException("please config vars");
         }
 
-        PgyUploadResult pgyUploadResult = startUpload2Pgy(apkPath, pgyApiKey);
+        PgyUploadResult pgyUploadResult = startUpload2Pgy(apkPath, pgyApiKey, description);
 
         if (isEmpty(feishuBotAppId) || isEmpty(feishuBotAppSecret) || isEmpty(chatName) || pgyUploadResult == null)
             return;
@@ -55,7 +55,7 @@ public class ApkUploader {
     /**
      * 上传APK到蒲公英
      */
-    private static PgyUploadResult startUpload2Pgy(String apkPath, String pgyApiKey) throws Exception {
+    private static PgyUploadResult startUpload2Pgy(String apkPath, String pgyApiKey, String description) throws Exception {
         System.out.println("prepareUpload2Pgy");
 
         if (!new File(apkPath).exists())
@@ -63,7 +63,7 @@ public class ApkUploader {
 
         HashMap<String, String> params = new HashMap<>();
         params.put("_api_key", pgyApiKey);
-        params.put("buildUpdateDescription", "");
+        params.put("buildUpdateDescription", description);
         params.put("buildInstallType", "2");
         params.put("buildPassword", "123456");
 
@@ -98,20 +98,23 @@ public class ApkUploader {
                 .add("Authorization", "Bearer " + feishuAccessToken.getTenant_access_token())
                 .build();
 
-        //2.找到发送的群
-        HashMap<String, String> chatListParams = new HashMap<>();
-        chatListParams.put("page_size", "200");
-        chatListParams.put("page_token", "");
+        System.out.println("accessToken = " + feishuAccessToken.getTenant_access_token());
 
-        FeishuChatListResult feishuChatListResult = new HttpRequest<FeishuChatListResult>(URL_FEISHU_CHAT_LIST,
+        //2.找到发送的群
+        FeishuChatListResult feishuChatListResult = new HttpRequest<FeishuChatListResult>(
+                URL_FEISHU_CHAT_LIST + "?page_size=200",
                 new TypeToken<HttpResponse<FeishuChatListResult>>() {
-                }).doRequest(chatListParams, authorizationHeaders);
+                }).doGetRequest(authorizationHeaders);
 
         String chatId = "";
         for (FeishuGroup group : feishuChatListResult.getGroups()) {
             if (group.getName().equals(chatName)) {
                 chatId = group.getChat_id();
             }
+        }
+
+        if (chatId.isEmpty()) {
+            throw new IllegalAccessException("未加入该群聊：" + chatName);
         }
 
         //3.上传图片
