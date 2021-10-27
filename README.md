@@ -11,7 +11,7 @@
 
 #### 配置build.gradle
 
-在位于项目的根目录 `build.gradle` 文件中添加Walle Gradle插件的依赖， 如下：
+在位于项目的根目录 `build.gradle` 文件中添加Packassist Gradle插件的依赖， 如下：
 
 ```groovy
 buildscript {
