@@ -1,5 +1,6 @@
 package com.piaoquantv.util;
 
+import com.piaoquantv.ApkUploader;
 import com.piaoquantv.bean.PgyUploadResult;
 import com.piaoquantv.bean.model.Message;
 import com.piaoquantv.bean.model.config.MessageConfig;
@@ -10,6 +11,7 @@ import com.piaoquantv.bean.model.element.ImageElement;
 import com.piaoquantv.bean.model.element.MarkDownText;
 import com.piaoquantv.bean.model.header.HeadTitle;
 import com.piaoquantv.bean.model.header.MessageHeader;
+import com.piaoquantv.bean.property.PackProperty;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +21,7 @@ import java.util.List;
  */
 public class MessageHelper {
 
-    public static Message buildMessageContent(PgyUploadResult pgyUploadResult, String imageKey, String description) {
+    public static Message buildMessageContent(PgyUploadResult pgyUploadResult, String imageKey, List<PackProperty> packProperties) {
 
         MessageConfig messageConfig = new MessageConfig();
 
@@ -32,8 +34,8 @@ public class MessageHelper {
         elements.add(imageElement);
 
         DivElement textElement = new DivElement();
-        if (description != null && !description.isEmpty()) {
-            textElement.fields.add(new Filed(new MarkDownText(String.format("**备注**：%s", description))));
+        for (PackProperty packProperty : packProperties) {
+            textElement.fields.add(new Filed(new MarkDownText(String.format("**%s**：%s", packProperty.name, packProperty.value))));
         }
         textElement.fields.add(new Filed(new MarkDownText(String.format("**打包人**：%s", System.getProperty("user.name")))));
         textElement.fields.add(new Filed(new MarkDownText("**安装密码：**123456")));

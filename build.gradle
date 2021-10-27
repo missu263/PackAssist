@@ -12,7 +12,7 @@ buildscript {
     dependencies {
         classpath "com.android.tools.build:gradle:4.0.0"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath "io.github.missu263:packassist:1.0.0"
+        classpath "io.github.missu263:packassist:1.4.0"
         classpath 'com.github.dcendents:android-maven-gradle-plugin:1.4.1'
         classpath "org.jetbrains.dokka:dokka-gradle-plugin:$dokka_version"
     }

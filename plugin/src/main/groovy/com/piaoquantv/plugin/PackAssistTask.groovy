@@ -2,6 +2,7 @@ package com.piaoquantv.plugin
 
 import com.android.build.gradle.api.BaseVariant
 import com.piaoquantv.ApkUploader
+import com.piaoquantv.bean.property.PackProperty
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.tasks.Input
@@ -17,7 +18,6 @@ public class PackAssistTask extends DefaultTask {
     @Input
     public Project targetProject
 
-    public static final String DESCRIPTION = "description"
 
     public void setup() {
         description " upload "
@@ -33,16 +33,30 @@ public class PackAssistTask extends DefaultTask {
                 def it = iterator.next()
                 def apkFile = it.outputFile
 
-                def description = ""
-                if (targetProject.hasProperty(DESCRIPTION)) {
-                    description = targetProject.getProperties().get(DESCRIPTION)
-                }
+                def packProperties = new ArrayList()
+                def chatNameProperty = ""
 
-                println("description = " + description)
                 println("apkFile =  " + apkFile.path)
 
-                ApkUploader.start(apkFile.path, extension.pgyApiKey, extension.chatName,
-                        extension.feishuBotAppId, extension.feishuBotAppSecret, description)
+                def propertyIterator = targetProject.getProperties().keySet().iterator()
+                while (propertyIterator.hasNext()) {
+                    def propertyName = propertyIterator.next()
+                    if (PackProperty.isCustomProperty(propertyName)) {
+                        def name = propertyName.replace(PackProperty.CUSTOM_PROPERTY_FLAG, "")
+                        if (PackProperty.CHAT_NAME == name) {
+                            chatNameProperty = targetProject.getProperties().get(propertyName)
+                        } else {
+                            packProperties.add(PackProperty.build(name, targetProject.getProperties().get(propertyName)))
+                        }
+                    }
+                }
+
+                println("properties build complete !")
+
+
+                ApkUploader.start(apkFile.path, extension.pgyApiKey,
+                        (chatNameProperty == null || chatNameProperty.isBlank()) ? extension.chatName : chatNameProperty,
+                        extension.feishuBotAppId, extension.feishuBotAppSecret, packProperties)
             }
         } catch (Exception e) {
             e.printStackTrace()

@@ -10,6 +10,7 @@ import com.piaoquantv.bean.FeishuSendMessageResult;
 import com.piaoquantv.bean.PgyUploadResult;
 import com.piaoquantv.bean.model.Message;
 import com.piaoquantv.bean.model.MessageParams;
+import com.piaoquantv.bean.property.PackProperty;
 import com.piaoquantv.http.HttpRequest;
 import com.piaoquantv.http.HttpResponse;
 import com.piaoquantv.util.MessageHelper;
@@ -17,6 +18,7 @@ import com.piaoquantv.util.MessageHelper;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.HashMap;
+import java.util.List;
 
 import okhttp3.Headers;
 import okhttp3.MediaType;
@@ -26,6 +28,9 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
+
+import static com.piaoquantv.bean.property.PackProperty.ENV;
+
 
 /**
  * Create by nieqi on 2021/7/8
@@ -39,17 +44,26 @@ public class ApkUploader {
     public static final String URL_FEISHU_SEND_MESSAGE = "https://open.feishu.cn/open-apis/message/v4/send";
 
     public static void start(String apkPath, String pgyApiKey, String chatName,
-                             String feishuBotAppId, String feishuBotAppSecret, String description) throws Exception {
+                             String feishuBotAppId, String feishuBotAppSecret,
+                             List<PackProperty> packProperties) throws Exception {
         if (isEmpty(pgyApiKey)) {
             throw new IllegalArgumentException("please config vars");
         }
 
-        PgyUploadResult pgyUploadResult = startUpload2Pgy(apkPath, pgyApiKey, description);
+        String env = "";
+        for (PackProperty packProperty : packProperties) {
+            if (ENV.equals(packProperty.name)) {
+                env = packProperty.value;
+            }
+            System.out.println(packProperty.toString());
+        }
+
+        PgyUploadResult pgyUploadResult = startUpload2Pgy(apkPath, pgyApiKey, env);
 
         if (isEmpty(feishuBotAppId) || isEmpty(feishuBotAppSecret) || isEmpty(chatName) || pgyUploadResult == null)
             return;
 
-        startSendFeishuMessage(pgyUploadResult, chatName, feishuBotAppId, feishuBotAppSecret, description);
+        startSendFeishuMessage(pgyUploadResult, chatName, feishuBotAppId, feishuBotAppSecret, packProperties);
     }
 
     /**
@@ -79,7 +93,8 @@ public class ApkUploader {
      * 往指定的飞书群中发送消息
      */
     private static void startSendFeishuMessage(PgyUploadResult pgyUploadResult, String chatName,
-                                               String feishuBotAppId, String feishuBotAppSecret, String description) throws Exception {
+                                               String feishuBotAppId, String feishuBotAppSecret,
+                                               List<PackProperty> packProperties) throws Exception {
 
         Headers headers = new Headers.Builder()
                 .add("content-type", "application/json; charset=utf-8")
@@ -121,7 +136,7 @@ public class ApkUploader {
         String imageKey = uploadDownloadQRCode2Feishu(feishuAccessToken.getTenant_access_token(), pgyUploadResult.getBuildQRCodeURL());
 
         //4.发送消息
-        Message messageContent = MessageHelper.buildMessageContent(pgyUploadResult, imageKey, description);
+        Message messageContent = MessageHelper.buildMessageContent(pgyUploadResult, imageKey, packProperties);
         MessageParams messageParams = new MessageParams(chatId, messageContent);
         RequestBody requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), new Gson().toJson(messageParams));
 

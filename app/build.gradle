@@ -11,6 +11,13 @@ if (localPropertiesFile.exists()) {
     println "No properties file"
 }
 
+def packEnvProperty = "custom_pack_property_接口环境"
+ext {
+    if (!project.hasProperty(packEnvProperty)) {
+        setProperty(packEnvProperty, "")
+    }
+}
+
 android {
     compileSdkVersion 30
     buildToolsVersion "30.0.3"
@@ -47,7 +54,7 @@ android {
     task releasePackAssist {
         afterEvaluate {
             tasks.findByName('assembleReleaseAssist').doFirst {
-                project.setProperty("description", "release")
+//                project.setProperty("description", "release")
             }
             dependsOn 'assembleReleaseAssist'
         }
@@ -56,7 +63,7 @@ android {
     task testPackAssist {
         afterEvaluate {
             tasks.findByName('assembleSnapshotAssist').doFirst {
-                project.setProperty("description", "snapshot")
+//                project.setProperty("description", "snapshot")
             }
             dependsOn 'assembleSnapshotAssist'
         }
@@ -65,11 +72,14 @@ android {
     task debugPackAssist {
         afterEvaluate {
             tasks.findByName('assembleDebugAssist').doFirst {
-                project.setProperty("description", "debug")
+//                ext.custom_pack_property_接口环境 = "当前接口环境->生产"
+//                ext.setProperty("custom_pack_property_接口环境", "当前接口环境->生产")
+                project.setProperty(packEnvProperty, "当前接口环境->生产")
             }
             dependsOn 'assembleDebugAssist'
         }
     }
+
 }
 
 dependencies {
